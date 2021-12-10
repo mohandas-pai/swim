@@ -37,25 +37,35 @@ Tactic* ReactiveAdaptationManager3::evaluate() {
     const double dimmerStep = 1.0 / (pModel->getNumberOfDimmerLevels() - 1);
     double dimmer = pModel->getDimmerFactor();
     bool isServerBooting = pModel->getServers() > pModel->getActiveServers();
+    int noOfActiveServers = pModel->getActiveServers();
+    int maxSeverCount = pModel->getMaxServers();
+    double avgArrivalRate = pModel->getArrivalRate();
     double responseTime = pModel->getObservations().avgResponseTime;
 
-/*    if (responseTime > RT_THRESHOLD) {
-        if (!isServerBooting
-                && pModel->getServers() < pModel->getMaxServers()) {
-            pMacroTactic->addTactic(new AddServerTactic);
-        } else if (dimmer > 0.0) {
-            dimmer = max(0.0, dimmer - dimmerStep);
+    if(responseTime > RT_THRESHOLD){ //we have higher response rate
+        if(avgArrivalRate < ARR_THRESHOLD){ //we have lesser arrival rate so it is better to reduce dimmer value
+            dimmer = dimmer - 0.25;
             pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
         }
-    } else if (responseTime < RT_THRESHOLD) { // can we increase dimmer or remove servers?
-        if (dimmer < 1.0) {
-            dimmer = min(1.0, dimmer + dimmerStep);
-            pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
-        } else if (!isServerBooting
-                && pModel->getServers() > 1) {
+        else{ //we have higer traffic so we should add server.(we can also check if reducing dimmer will help)
+            if(pModel->getServers() < pModel->getMaxServers()){
+                pMacroTactic->addTactic(new AddServerTactic);
+            }
+            if(avgArrivalRate - ARR_THRESHOLD > 10){ //10 is a random number now; it should notify some very high arrival rate;
+                dimmer = dimmer - 0.5;
+                pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
+            }
+        }
+    }else{ //we have low response rate, so we first try to increase the dimmer factor by one
+        dimmer = dimmer + 0.25;
+        pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
+        if(pModel->getServers() < noOfActiveServers){ // we have more servers so we either remove server or increase dimmer factor
+            //TODO: Need a good If loop here
             pMacroTactic->addTactic(new RemoveServerTactic);
+            dimmer = dimmer + 0.25;
+            pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
         }
-    }*/
 
+    }
     return pMacroTactic;
 }
