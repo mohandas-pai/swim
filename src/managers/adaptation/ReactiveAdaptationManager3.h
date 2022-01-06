@@ -1,20 +1,13 @@
-/*******************************************************************************
- * Simulator of Web Infrastructure and Management
- * Copyright (c) 2016 Carnegie Mellon University.
- * All Rights Reserved.
- *  
- * THIS SOFTWARE IS PROVIDED "AS IS," WITH NO WARRANTIES WHATSOEVER. CARNEGIE
- * MELLON UNIVERSITY EXPRESSLY DISCLAIMS TO THE FULLEST EXTENT PERMITTED BY LAW
- * ALL EXPRESS, IMPLIED, AND STATUTORY WARRANTIES, INCLUDING, WITHOUT
- * LIMITATION, THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE, AND NON-INFRINGEMENT OF PROPRIETARY RIGHTS.
- *  
- * Released under a BSD license, please see license.txt for full terms.
- * DM-0003883
- *******************************************************************************/
+/*
+ * ReactiveAdaptationManager3.h
+ *
+ *  Created on: Dec 27, 2021
+ *      Author: root
+ */
 
-#ifndef __PLASASIM_REACTIVEADAPTATIONMANAGER2_H_
-#define __PLASASIM_REACTIVEADAPTATIONMANAGER2_H_
+#ifndef MANAGERS_ADAPTATION_REACTIVEADAPTATIONMANAGER3_H_
+#define MANAGERS_ADAPTATION_REACTIVEADAPTATIONMANAGER3_H_
+
 
 #include "BaseAdaptationManager.h"
 
@@ -27,4 +20,4 @@ class ReactiveAdaptationManager3 : public BaseAdaptationManager
     virtual Tactic* evaluate();
 };
 
-#endif
+#endif /* MANAGERS_ADAPTATION_REACTIVEADAPTATIONMANAGER3_H_ */
