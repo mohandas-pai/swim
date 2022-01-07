@@ -19,45 +19,48 @@ Define_Module(ReactiveAdaptationManager3);
 Tactic* ReactiveAdaptationManager3::evaluate() {
     MacroTactic* pMacroTactic = new MacroTactic;
     Model* pModel = getModel();
-    const double dimmerStep = 1.0 / (pModel->getNumberOfDimmerLevels() - 1);
+    const double dimmerStep = 0.2;
     double dimmer = pModel->getDimmerFactor();
     bool isServerBooting = pModel->getServers() > pModel->getActiveServers();
     int noOfActiveServers = pModel->getActiveServers();
     int maxSeverCount = pModel->getMaxServers();
-    double avgArrivalRate = pModel->getArrivalRate();
+    //double avgArrivalRate = pModel->getArrivalRate();
     double servUtil = pModel->getActiveServers() - pModel->getObservations().utilization;
     double responseTime = pModel->getObservations().avgResponseTime;
     bool reduceDimmerFlag = true;
 
+
     if(responseTime > RT_THRESHOLD){ //we have higher response rate
         //first try to reduce the dimmer value
-        while(reduceDimmerFlag){
-            dimmer = max(0.2, dimmer-dimmerStep);
-            pModel->addTactic(new SetDimmerTactic(dimmer));
-            if(dimmer = 0.2 && responseTime > RT_THRESHOLD){
-                reduceDimmerFlag = false;
+        if (dimmer > 0.4){
+            dimmer = max(0.4, dimmer-dimmerStep);
+            pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
+
+            if(responseTime > RT_THRESHOLD * 2){
+                if (!isServerBooting && pModel->getServers() < pModel->getMaxServers()) {
+                    pMacroTactic->addTactic(new AddServerTactic);
+                }
             }
-        }
-        if(reduceDimmerFlag = false){
-            //add server
+        }else{
             if (!isServerBooting && pModel->getServers() < pModel->getMaxServers()) {
                 pMacroTactic->addTactic(new AddServerTactic);
-                reduceDimmerFLag = true;
-                //should now increase dimmer value
+            }
+            else{
+                dimmer = max(0.2 ,dimmer -dimmerStep);
+                pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
             }
         }
-
     }else{  //we have low response time
         // first remove server
-        if (spareUtilization > 1) {
-            if (!isServerBooting && pModel->getServers() > 1) {
-                pMacroTactic->addTactic(new RemoveServerTactic);
+        dimmer = min(1.0, dimmer + dimmerStep);
+        pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
+        if(dimmer == 1.0){
+            if (servUtil > 1) {
+                if (!isServerBooting && pModel->getServers() > 1) {
+                    pMacroTactic->addTactic(new RemoveServerTactic);
+                }
             }
-        // if still low then increase dimmer to 0.75 or 1
-        }else{
-            dimmer = min(1.0, dimmer + dimmerStep);
-            pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
         }
     }
+    return pMacroTactic;
 }
-
