@@ -24,14 +24,28 @@ Tactic* ReactiveAdaptationManager3::evaluate() {
     bool isServerBooting = pModel->getServers() > pModel->getActiveServers();
     int noOfActiveServers = pModel->getActiveServers();
     int maxSeverCount = pModel->getMaxServers();
-    //double avgArrivalRate = pModel->getArrivalRate();
+    double basicArrivalRate = pModel->getObservations().basicArrivalRate;
+    double avgArrivalRate = pModel->getObservations().avgArrivalRate;
     double servUtil = pModel->getActiveServers() - pModel->getObservations().utilization;
     double responseTime = pModel->getObservations().avgResponseTime;
     bool reduceDimmerFlag = true;
 
 
+    if(basicArrivalRate > 50 && noOfActiveServers == 2 ){
+        if (dimmer > 0.4){
+                    dimmer = max(0.4, dimmer-dimmerStep);
+                    pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
+        }
+        else if (!isServerBooting && pModel->getServers() < pModel->getMaxServers()) {
+            pMacroTactic->addTactic(new AddServerTactic);
+        }
+        return pMacroTactic;
+    }
+
     if(responseTime > RT_THRESHOLD){ //we have higher response rate
         //first try to reduce the dimmer value
+        //cout << "\n+++ basicArrivalRate = "<<basicArrivalRate<<endl;
+        //cout << "+++ avgArrivalRate = "<<avgArrivalRate<<endl;
         if (dimmer > 0.4){
             dimmer = max(0.4, dimmer-dimmerStep);
             pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
@@ -52,6 +66,8 @@ Tactic* ReactiveAdaptationManager3::evaluate() {
         }
     }else{  //we have low response time
         // first remove server
+        //cout << "\n--- basicArrivalRate = "<<basicArrivalRate<<endl;
+        //cout << "--- avgArrivalRate = "<<avgArrivalRate<<endl;
         dimmer = min(1.0, dimmer + dimmerStep);
         pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
         if(dimmer == 1.0){
@@ -64,3 +80,4 @@ Tactic* ReactiveAdaptationManager3::evaluate() {
     }
     return pMacroTactic;
 }
+

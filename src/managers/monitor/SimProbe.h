@@ -35,6 +35,7 @@ public:
     double getOptThroughput();
     double getUtilization(const std::string& serverName);
     double getArrivalRate();
+    double getAvgArrivalRate();
 
     Observations getUpdatedObservations();
     Environment getUpdatedEnvironment();

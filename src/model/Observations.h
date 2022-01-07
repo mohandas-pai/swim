@@ -22,6 +22,8 @@ public:
     double optResponseTime;
     double basicThroughput;
     double optThroughput;
+    double basicArrivalRate;
+    double avgArrivalRate;
     double avgResponseTime;
     double utilization;
 
