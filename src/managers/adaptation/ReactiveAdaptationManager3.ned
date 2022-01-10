@@ -25,5 +25,5 @@ simple ReactiveAdaptationManager3 like IAdaptationManager
         @signal[decisionTime](type="double");
         @statistic[decisionTime](unit=msec; record=mean,max,vector);
 
-        @class(ReactiveAdaptationManager2);
+        @class(ReactiveAdaptationManager3);
 }

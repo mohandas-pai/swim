@@ -20,7 +20,7 @@
 #include <model/Model.h>
 
 #define RT_THRESHOLD omnetpp::getSimulation()->getSystemModule()->par("responseTimeThreshold").doubleValue()
-
+#define AR_WARNING omnetpp::getSimulation()->getSystemModule()->par("arrivalRateWarning").doubleValue()
 /*
  * MAX_SERVICE_RATE is the max number of requests/sec a single server can
  * process with normal service.

@@ -43,6 +43,7 @@ network SWIM_SA
         string adaptationManagerType;
         double dimmerMargin = default(0.0);
         double responseTimeThreshold @unit(s) = default(1s);
+        double arrivalRateWarning = default(50.0);
         double maxServiceRate;
         double optRevenue = default(1.5);
         double penaltyMultiplier = default(1);
