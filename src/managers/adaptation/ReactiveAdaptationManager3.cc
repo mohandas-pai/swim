@@ -6,17 +6,6 @@ using namespace std;
 
 Define_Module(ReactiveAdaptationManager3);
 
-/**
- * Reactive adaptation
- *
- * RT = response time
- * RTT = response time threshold
- *   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
- *
- * - if RT > RTT, add a server if possible, if not decrease dimmer if possible
- * - if RT < RTT
- *      -if dimmer < 1, increase dimmer else if servers > 1 and no server booting remove server
- */
 Tactic* ReactiveAdaptationManager3::evaluate() {
     MacroTactic* pMacroTactic = new MacroTactic;
         Model* pModel = getModel();
@@ -68,8 +57,6 @@ Tactic* ReactiveAdaptationManager3::evaluate() {
             }
         }else{  //we have low response time
             // first remove server
-            //cout << "\n--- basicArrivalRate = "<<basicArrivalRate<<endl;
-            //cout << "--- avgArrivalRate = "<<avgArrivalRate<<endl;
             dimmer = min(1.0, dimmer + dimmerStep);
             pMacroTactic->addTactic(new SetDimmerTactic(dimmer));
             if(dimmer == 1.0){
