@@ -73,6 +73,10 @@ double SimProbe::getArrivalRate() {
     return arrival.getRate();
 }
 
+double SimProbe::getAvgArrivalRate() {
+    return arrival.getAverage();
+}
+
 void SimProbe::handleMessage(cMessage *msg)
 {
     // TODO - Generated method body
@@ -133,6 +137,8 @@ Observations SimProbe::getUpdatedObservations() {
     obs.basicThroughput = getBasicThroughput();
     obs.optResponseTime = getOptResponseTime();
     obs.optThroughput = getOptThroughput();
+    obs.basicArrivalRate = getArrivalRate();
+    obs.avgArrivalRate =getAvgArrivalRate();
     obs.avgResponseTime = (obs.basicResponseTime * obs.basicThroughput + obs.optResponseTime * obs.optThroughput)
             / (obs.basicThroughput + obs.optThroughput);
 
